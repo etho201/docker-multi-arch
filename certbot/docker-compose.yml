@@ -1,0 +1,22 @@
+---
+version: '3.7'
+services:
+
+########################################################################################
+# Certbot
+# https://hub.docker.com/r/certbot/certbot/
+########################################################################################
+
+  certbot:
+    #image: certbot/certbot #There is no arm version so we have to build it
+    build:
+      context: .
+      dockerfile: Dockerfile-certbot
+      args:
+        - CERTBOT_VERSION=0.39.0
+    image: etechonomy/certbot
+    container_name: certbot
+    volumes:
+      - ${CONFIG_DIR}/letsencrypt:/etc/letsencrypt
+      - ./data/example.com:/var/www/html
+    command: certonly --webroot --webroot-path=/var/www/html --email user@example.com --agree-tos --no-eff-email --staging -d example.com -d www.example.com #remove staging and add --force-renewal after successful run
